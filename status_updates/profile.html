@@ -5,7 +5,29 @@
 
 <head>
 <title>Fecesbook</title>
-</head>
+
+    <script>
+       function add_update() {
+           var text;
+           var time = new Date();
+           var yyyy = time.getFullYear();
+           var month = time.getMonth()+1;
+           var dd = time.getDate(); 
+           var hh = time.getHours();
+           var min = time.getMinutes();
+
+
+           text =   month + '/' + dd + '/' + yyyy + ' ' + hh + ':' + min + " - ";
+         
+           text += document.getElementById("msg").value;
+           
+           document.getElementById("status").innerHTML = "<p>" + text  + "</p>" +  document.getElementById("status").innerHTML;
+
+           document.getElementById("msg").value = '';
+       }
+
+    </script>
+ </head>
 
 <body>
 	<h1>Fecebook</h1>
@@ -20,7 +42,7 @@
 		</ul>
 	</div>
 	<h2 id="fullname">Barney Gumble</h2>
-	<h3>What are you thinking about? <input type="text" id="msg" name="msg" size="30" /></h3>
+	<h3>What are you thinking about? <input type="text" id="msg" name="msg" onchange="add_update()" size="30" /></h3>
 	<h3>Updates</h3>
 	<div id="status">
 	</div>

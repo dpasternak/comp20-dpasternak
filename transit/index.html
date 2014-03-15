@@ -21,6 +21,7 @@
     var s_infowindow;
     var line;
     var myLatLon;
+    var closestStation
 
 
 
@@ -35,7 +36,8 @@
 
 
     function init() {
-
+    	closestStation = {name:"the moon", distance: 2000}
+    	getMyLocation();
         
     	getTrainInfo();
 	    //drawLine();
@@ -44,7 +46,7 @@
 
     	
     	map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
-    	getMyLocation();
+
     }
 
     function getTrainInfo() {
@@ -65,18 +67,49 @@
     function dataReady() {
     	if(xhr.readyState == 4 && xhr.status == 200) {
     		scheduleData = JSON.parse(xhr.responseText);
+
     		line = scheduleData["line"];
-    		drawLine(5);
-    	}    	
+    		drawLine();
+    	}  else if (xhr.readyState == 4 && xhr.status == 500){
+    		alert("schedule data could not be proccessed");
+
+    	}
+    }
+
+    function generateStationSchedule(sname) {
+    	var schedule = scheduleData["schedule"];
+    	console.log(schedule);
+    	var tableHTML;
+    	tableHTML = "<h2>" + sname + "</h2>"
+    	tableHTML += "<table><tr><td>Destination</td><td>ETA (seconds) </td></tr>";
+
+
+    	for(var i = 0; i < schedule.length; i++) {
+    		var p = schedule[i].Predictions;
+    		for(var j = 0; j < p.length; j++) {
+    			if(p[j].Stop == sname) {
+    			  tableHTML += "<tr> <td>" + schedule[i].Destination + "</td><td>" + p[j].Seconds + "</td></tr>";	
+    			}
+    		}
+    		
+
+    	}
+
+    	tableHTML += "</table>";
+
+        return tableHTML;
     }
 
     function drawLine() {
-        console.log(line);
         for(var i = 0; i < s.length; i++) {
-        	console.log(s[i]["line"]);
-
-  			if(s[i]["line"] == line) { console.log("ok");
+  			if(s[i]["line"] == line) { 
     	        s_loc = new google.maps.LatLng(s[i]["lat"], s[i]["lng"]);
+    	        var s_latlon = new LatLon(s[i]["lat"], s[i]["lng"]);
+    	       
+    	        if(myLatLon.distanceTo(s_latlon) < closestStation["distance"]){
+    	        	closestStation["distance"] = myLatLon.distanceTo(s_latlon);
+    	        	closestStation["name"] = s[i]["station"]; 
+    	        }
     	        s_marker = new google.maps.Marker({
     		        position: s_loc,
     		        title: s[i]["station"],
@@ -87,8 +120,11 @@
     	        s_infowindow = new google.maps.InfoWindow();
 
     	       	google.maps.event.addListener(s_marker, 'click', function() {
-				s_infowindow.setContent(this.title);
-		 		s_infowindow.open(map, this);
+    	       		var stationName = this.title;
+    	       		var htmlstring = generateStationSchedule(stationName);
+    	       		
+				    s_infowindow.setContent(htmlstring);
+		 		    s_infowindow.open(map, this);
 				});
     	    }
         }
@@ -97,6 +133,10 @@
         if(line == "blue") { drawBlueLine(); }
         else if(line == "orange") { drawOrangeLine(); }
         else if(line == "red") { drawRedLine(); }
+
+        //label closest station:
+        closestStation["distance"] = closestStation["distance"] * 0.62;
+        document.getElementById("closest_station").innerHTML = "Closest Station" + '&nbsp' + closestStation["name"] + '&nbsp' + '&nbsp' + '&nbsp' + '&nbsp' + "Distance:" + '&nbsp' + (closestStation["distance"]).toString();
 
 
     }
@@ -219,7 +259,7 @@
     	  navigator.geolocation.getCurrentPosition(function(position) {
     	  	myLat = position.coords.latitude;
     	  	myLng = position.coords.longitude;
-    	  	myLatLon = new LatLng(myLat, myLng);
+    	  	myLatLon = new LatLon(myLat, myLng);
     	  	renderMap();
     	    }
     	  );
@@ -246,26 +286,14 @@
 		});
     }
 
-    function haversine(lat1, lon1, lat2, lon2) {
-    	var R = 6371; // km
-		var dLat = (lat2-lat1).toRad();
-		var dLon = (lon2-lon1).toRad();
-		var lat1 = lat1.toRad();
-		var lat2 = lat2.toRad();
 
-		var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-        Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
-		var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-		var d = R * c;
-		return d;
-    }
 
     </script>
 </head>
 
 <body onload = "init()" >
   <div id = "map_canvas"> </div>
-
+  <div id = "closest_station"></div>
 </body>
 
 </html>

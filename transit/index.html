@@ -4,11 +4,12 @@
 
 <head>
   <title> MBTA Tracker </title>
-  <meta name="viewport" content="initial-scale=1.0, user-scalable=no" charset = 'utf-8'/>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
   <link rel="stylesheet" href="transit.css" />
   <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=true&amp;libraries=places"></script>
-  <script type="text/javascript" src="latlon.js"></script>
   <script type="text/javascript" src="geo.js"></script>
+  <script type="text/javascript" src="latlon.js"></script>
   <script>
     var myLat;
     var myLng;
@@ -34,10 +35,8 @@
     function init() {
     	closestStation = {name:"the moon", distance: 2000}
     	getMyLocation();
-        
     	getTrainInfo();
-  	
-    	map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+  	   	map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
     }
 
     function getTrainInfo() {
@@ -74,12 +73,8 @@
     			  tableHTML += "<tr> <td>" + schedule[i].Destination + "</td><td>" + p[j].Seconds + "</td></tr>";	
     			}
     		}
-    		
-
     	}
-
     	tableHTML += "</table>";
-
         return tableHTML;
     }
 
@@ -87,12 +82,7 @@
         for(var i = 0; i < s.length; i++) {
   			if(s[i]["line"] == line) { 
     	        s_loc = new google.maps.LatLng(s[i]["lat"], s[i]["lng"]);
-    	        var s_latlon = new LatLon(s[i]["lat"], s[i]["lng"]);
-    	       
-    	        if(myLatLon.distanceTo(s_latlon) < closestStation["distance"]){
-    	        	closestStation["distance"] = myLatLon.distanceTo(s_latlon);
-    	        	closestStation["name"] = s[i]["station"]; 
-    	        }
+
     	        s_marker = new google.maps.Marker({
     		        position: s_loc,
     		        title: s[i]["station"],
@@ -116,12 +106,57 @@
         if(line == "blue") { drawBlueLine(); }
         else if(line == "orange") { drawOrangeLine(); }
         else if(line == "red") { drawRedLine(); }
+    }
+
+    function getMyLocation() {
+    	if(navigator.geolocation) { 	
+    	  navigator.geolocation.getCurrentPosition(function(position) {
+    	  	myLat = position.coords.latitude;
+    	  	myLng = position.coords.longitude;
+    	  	myLatLon = new LatLon(myLat, myLng);
+    	  	renderMap();
+    	  	getClosestStation();
+    	    }
+    	  );
+        }
+        else { 
+          alert("geolocation not supported by your browser");
+        }
+    }
+
+    function getClosestStation() {
+
+   		for(var i = 0; i < s.length; i++) {
+  			if(s[i]["line"] == line) { 
+
+    			var s_latlon = new LatLon(s[i]["lat"], s[i]["lng"]);
+    	        
+    			if(myLatLon.distanceTo(s_latlon) < closestStation["distance"]){
+	    	   		closestStation["distance"] = myLatLon.distanceTo(s_latlon);
+    		   		closestStation["name"] = s[i]["station"]; 
+    			}
+    		}
+    	}
 
         //label closest station:
         closestStation["distance"] = closestStation["distance"] * 0.62;
-        document.getElementById("closest_station").innerHTML = "Closest Station" + '&nbsp' + closestStation["name"] + '&nbsp' + '&nbsp' + '&nbsp' + '&nbsp' + "Distance:" + '&nbsp' + (closestStation["distance"]).toString();
+        document.getElementById("closest_station").innerHTML = "Closest Station" + '&nbsp' + closestStation["name"] + '&nbsp' + '&nbsp' + '&nbsp' + '&nbsp' + "Distance:" + '&nbsp' + (closestStation["distance"]).toString() + '&nbsp' + "miles";
+    }
 
-
+    function renderMap() {
+    	myloc = new google.maps.LatLng(myLat, myLng);
+    	map.panTo(myloc);
+    	
+    	marker = new google.maps.Marker({
+		  position: myloc,
+		  title: "Your Location"
+		});
+		marker.setMap(map);
+    	
+    	google.maps.event.addListener(marker, 'click', function() {
+		infowindow.setContent("<h1> Your Location </h1>");
+		 infowindow.open(map, marker);
+		});
     }
 
     function drawRedLine() {
@@ -153,7 +188,6 @@
     		new google.maps.LatLng(42.284652,-71.06448899999999)
 		];
 
-
 		var redLine = new google.maps.Polyline({
 			path:redBraintreeCoords,
 			geodesic:true,
@@ -164,7 +198,6 @@
 		redLine.setMap(map);
 
 		var ashmontBranch = new google.maps.Polyline({
-
 			path:redAshmontCoords,
 			geodesic:true,
 			strokeColor: '#FF0000',
@@ -232,45 +265,7 @@
     	});
 
     	blueLine.setMap(map);
-
-
     }
-
-
-    function getMyLocation() {
-    	if(navigator.geolocation) { 	
-    	  navigator.geolocation.getCurrentPosition(function(position) {
-    	  	myLat = position.coords.latitude;
-    	  	myLng = position.coords.longitude;
-    	  	myLatLon = new LatLon(myLat, myLng);
-    	  	renderMap();
-    	    }
-    	  );
-        }
-        else { 
-          alert("geolocation not supported by your browser");
-        }
-    }
-
-    function renderMap() {
-    	myloc = new google.maps.LatLng(myLat, myLng);
-    	map.panTo(myloc);
-    	
-    	marker = new google.maps.Marker({
-		  position: myloc,
-		  title: "Your Location"
-		});
-		marker.setMap(map);
-    	
-
-    	google.maps.event.addListener(marker, 'click', function() {
-		infowindow.setContent("<h1> Your Location </h1>");
-		 infowindow.open(map, marker);
-		});
-    }
-
-
-
     </script>
 </head>
 

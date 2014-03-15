@@ -18,10 +18,9 @@ to that station. If any of the markers are clicked on, an infowindow containing
 a timetable will appear.
 
 incorrectly implemented:
-Due to a bug that i can't find, the map often takes several times to
-load properly. The output to console when this occurs is as follows
-If you refresh the page, it will load correctly eventually. (may take
-many many many refreshes, but it will load)
+The function that calculates the closest station will occasionally run before
+the line is specified. this results in the default value (Station: the moon,
+distance: 12400 miles) being displayed.
 
 -------------------------------------------------------------------------------
 

@@ -7,6 +7,13 @@
 <title>Fecesbook</title>
 
     <script>
+
+   		function init() {
+   			if(localStorage["statuses"]) {
+    			document.getElementById("status").innerHTML = 	localStorage["statuses"];
+    		}
+    	}
+
        function add_update() {
            var text;
            var time = new Date();
@@ -21,15 +28,20 @@
          
            text += document.getElementById("msg").value;
            
-           document.getElementById("status").innerHTML = "<p>" + text  + "</p>" +  document.getElementById("status").innerHTML;
+           text = "<p>" + text  + "</p>" +  document.getElementById("status").innerHTML;
+
+           document.getElementById("status").innerHTML = text;
+           localStorage["statuses"] = text;
 
            document.getElementById("msg").value = '';
+
+
        }
 
     </script>
  </head>
 
-<body>
+<body onload = "init()">
 	<h1>Fecebook</h1>
 	<div id="nav">
 		<ul>

@@ -3,6 +3,18 @@ Comp 20
 Daniel Pasternak
 -------------------------------------------------------------------------------
 
+Lab7:
+
+Heroku app address:
+http://infinite-eyrie-4327.herokuapp.com/
+
+
+-------------------------------------------------------------------------------
+
+
+
+
+
 What has been correctly implemented?
 
 The profile page has been implemented according to the lab 5 guidelines.

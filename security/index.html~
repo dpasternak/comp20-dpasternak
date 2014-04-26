@@ -21,6 +21,34 @@
     <hr>
 
     <h2> Methodology </h2>
+    <p> The assessement of the 2048 scorecenter app was split into two parts. First, attacks were attempted treating the code as a "black box", without any awareness of the serverside contents. Then, the serverside program was viewed, and further attacks were carried out. Several techniques were used. They include changing the content of GET and POST requests using tamper data, generating malicious requests using curl, and funneling in unintended paramaters through the URL.
+    </p>
+
+    <p> In order to make the attacking process easier, a local copy of the mongo database and a local copy of the website was used. This allows for the use of debugging tools such as viewing the contents of the database and viewing the status of http requests to the site.
+    </p>
     <hr>
+    
+    <h2> Abstract of Findings </h2>
+    <br>
+ 
+    <h2> Issues Found with Technical Analysis </h2>
+    
+    <h3> Submission of invalid scores and usernames</h3>
+    <p><b> Affects the submit.json POST API </b></p>
+    <p> It is simple for a user to submit a post request with an invalid score or username, including leaving these fields null. Hence it is possible to use a POST request to sumbit a score of 99999999999 with no user name and no grid, as shown in the images below. </p>
+
+    <p> This would allow a user to post false high scores, impersonate other users, or otherwise pollute the 2048 gamecenter high score board. </p>
+
+    <img src="./fake-entry.png"></img><img src="./fakescoreonpage.png"></img>
+    
+    <hr>
+    <h3> Submission of HTML through POST API </h3>
+    <p><b> Affects submit.json POST API </b></p>
+    <p> No validation is performed on the input parameters. Importantly, HTML is not escaped, allowing a malicious attacker to insert HTML or javascipts into the database, which will then be displayed when a user loads the 2048 Gamecenter. For example, a Youtube en Iframe containing the double rainbow video has been added to the page </p>
+    <p> This expolit is particularly high risk. Since html is not escaped, a script could be added that when run on a client machine, either mangles the website beyond recognition, or cause other damage to the site. </p>
+    <img src="injectHTMLorScript.png"></img><p>curl request to inject HTML or script</p>
+    <img src="resultofHTMLinjection.png"></img><p>result of HTML injection</p>
+
+    
 
   </body>

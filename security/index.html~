@@ -1,0 +1,26 @@
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title> 2048 gamecenter security assessment </title>
+  </head>
+
+  <body>
+    <h1> 2048 gamecenter security assessment </h1>
+    <p> Comp 20 - Daniel Pasternak </p>
+    <hr>
+
+    <h2> Introduction</h2>
+    <p> This report is a security assessment of the Scorecenter web-app created by Emily Quigley. The scorecenter web-app is a tool that maintains a
+        database of scores, usernames, grid positions and submission times, and generates a table displaying a high score board. Additionally, the
+        site contains two other services, Submit.json and Scores.json. Submit.json accepts POST requests and is used to fill the database with highscores. It was the developers intent that the POST request would contain only usernames, valid scores, and valid grids. The Scores.json accpets GET requests and was intended to display a users high score, where a user could be specified using a URL parameter. 
+</p>
+<p>	This report investigates methods to exploit the submit.json and scores.json services to compromise the 2048 Scorecenter web-app.
+</p>
+    <hr>
+
+    <h2> Methodology </h2>
+    <hr>
+
+  </body>

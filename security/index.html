@@ -28,7 +28,8 @@
     </p>
     <hr>
     
-    <h2> Abstract of Findings </h2>
+    <h2> Abstract of Findings </h2> 
+    <p> The POST API contained all of the identified security issues of the scorecenter page. The vast majority of these issues stem from unrestricted content in the POST API. Essentially the only requirement is that the uploaded input is JSON. There is no verification that the JSON does not contain scripts, html, or is itself valid JSON. This could allow a user to upload scripts that will be executed on a client machine, or potentially on the server. The GET API was found to be relatively secure, as it did not easily allow code to be executed on any other machine. </p>
     <br>
  
     <h2> Issues Found with Technical Analysis </h2>
@@ -50,6 +51,17 @@
     <img src="injectHTMLorScript.png"></img><p>curl request to inject HTML or script</p>
     <img src="resultofHTMLinjection.png"></img><p>result of HTML injection</p>
 
-    
+    <hr>
+    <h3> Insertion of extra fields </h3>
+    <p></b> affects submit.json POST API </b></p>
+    <p> There is no checking of fields in the POST API. Any arbitrary field can be added to the database. </p>
+    <p> This may be dangerous if an attacker creates a data point with a new field that may contain arbitrary amounts of data. An attacker could potentially use this techinque to inflate the size of the database to extremely large levels. </p>
+    <img src="addingFields.png"></img>
+    <p> An attacker can add additional fields that are harder to identify beacuse they dont affect the user input, but may expand the size of the database significantly </p>
+    <hr>
+
+    <h2> Conclusion </h2>
+    <p> The POST API contains a majority of the security flaws of the website. No meaningful validation of user input is performed on the inputted code. This allows a user to upload HTML or javascripts. This is a security critical flaw that could allow an attacker to hijack the scorecenters frontpage by writing a script that changes the HTML of the page to whatever they wish. Furthermore, it could allow a user to inject a script, that if ran on the server machine when an administrator checks the code, alters critical files of the site. This can be fixed by escaping nonalphanumeric characters. </p>
+    <p> In contrast, the GET API is relatively secure. It does not provide a method to execute any code on the server or any client machines. </p>
 
   </body>
